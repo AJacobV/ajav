@@ -162,7 +162,7 @@ export default function App() {
       <Crosshair left="15%" bottom="15%" style={{ y: useTransform(smoothScroll, [0, 1], ["0vh", "-30vh"]) }} />
       <Crosshair left="85%" bottom="15%" style={{ x: useTransform(smoothScroll, [0, 1], ["0vw", "-20vw"]) }} />
 
-      <DotGrid top="5%" left="20%" rows={3} cols={6} style={{ rotate: gridRotate }} />
+      <DotGrid top="5%" left="20%" rows={3} cols={6} />
       <DotGrid top="5%" right="20%" rows={3} cols={6} style={{ scale: shapeScale }} />
       <DotGrid bottom="5%" left="20%" rows={3} cols={6} style={{ x: useTransform(smoothScroll, [0, 1], ["0vw", "10vw"]) }} />
       <DotGrid bottom="5%" right="20%" rows={3} cols={6} style={{ y: useTransform(smoothScroll, [0, 1], ["0vh", "-10vh"]) }} />
@@ -179,7 +179,7 @@ export default function App() {
       >
   {/* 4. Original Vertical Text Block - Static */}
       <div 
-        className="fixed right-24 md:right-48 bottom-12 z-0 flex gap-4 pointer-events-none opacity-80 scale-75 md:scale-90 origin-bottom-right"
+        className={`fixed right-24 md:right-48 bottom-12 z-0 flex gap-4 pointer-events-none scale-75 md:scale-90 origin-bottom-right transition-opacity duration-500 ${activeSection === 2 || activeSection === 3 ? 'opacity-0' : 'opacity-80'}`}
       >
         <div className="absolute -inset-8 bg-gray-200/40 backdrop-blur-sm border border-gray-700/50 -z-10 -skew-x-6" />
         

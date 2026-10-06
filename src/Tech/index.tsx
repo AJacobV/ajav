@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 export default function Tech() {
   const categories = [
     {
-      name: "Frontend",
-      items: ['JavaScript', 'TypeScript', 'React', 'Next.js', 'Tailwind CSS']
+      name: "Core Languages",
+      items: ['JavaScript', 'TypeScript', 'PHP', 'Java', 'Node.js']
     },
     {
-      name: "Backend",
-      items: ['Node.js', 'PHP', 'Java', 'Kotlin', 'Laravel', 'ASP.NET']
+      name: "Libraries & Frameworks",
+      items: ['React', 'Next.js', 'Tailwind CSS', 'Laravel', 'ASP.NET', 'Bootstrap', 'Materialize CSS']
     },
     {
       name: "Database & BaaS",

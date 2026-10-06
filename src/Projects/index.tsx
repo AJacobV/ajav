@@ -1,5 +1,167 @@
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight, X, Heart, Skull, Zap, Hexagon, Circle } from 'lucide-react';
+
+const LDRShape = ({ isHovered }: { isHovered: boolean }) => {
+  const [step, setStep] = useState(0);
+
+  const paths = [
+    // Square
+    "M 12 2 C 22 2, 22 2, 22 12 C 22 22, 22 22, 12 22 C 2 22, 2 22, 2 12 C 2 2, 2 2, 12 2 Z",
+    // Circle
+    "M 12 2 C 17.52 2, 22 6.48, 22 12 C 22 17.52, 17.52 22, 12 22 C 6.48 22, 2 17.52, 2 12 C 2 6.48, 6.48 2, 12 2 Z",
+    // Triangle (Larger, perfectly proportioned: 24x16, 5:3:3:5 dash ratio)
+    "M 12 5 C 18 13, 18 13, 24 21 C 18 21, 18 21, 12 21 C 6 21, 6 21, 0 21 C 6 13, 6 13, 12 5 Z"
+  ];
+
+  useEffect(() => {
+    if (!isHovered) {
+      setStep(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setStep(prev => prev + 1);
+    }, 800);
+    return () => clearInterval(interval);
+  }, [isHovered]);
+
+  const metaCycle = Math.floor(step / 9);
+  const metaDegrees = metaCycle * 720; // 360 (Square) + 360 (Circle) + 0 (Triangle)
+  const localStep = step % 9;
+  
+  const index = 
+    localStep < 2 ? 0 // Square (steps 0, 1)
+    : localStep < 5 ? 1 // Circle (steps 2, 3, 4)
+    : 2; // Triangle (steps 5, 6, 7, 8)
+
+  let currentRotation = metaDegrees;
+  switch (localStep) {
+    case 0: currentRotation += 0; break;
+    case 1: currentRotation += 360; break;
+    case 2: 
+    case 3: 
+    case 4: currentRotation += 720; break; // Circle animates 360 -> 720
+    case 5: currentRotation += 720; break; // Triangle morphs, stays still
+    case 6: currentRotation += 720; break; // Triangle splits
+    case 7: currentRotation += 720; break; // Triangle spins
+    case 8: currentRotation += 720; break; // Triangle merges
+  }
+  
+  return (
+    <div className="flex items-center justify-center w-16 h-16 relative">
+      <motion.svg 
+        viewBox="0 0 24 24" 
+        className="w-full h-full text-gray-800 overflow-visible"
+        animate={{ rotate: currentRotation }}
+        transition={{ 
+          rotate: index === 1 
+            ? { duration: 2.4, ease: "linear" } 
+            : { duration: 0.6, ease: "backOut" }
+        }}
+      >
+        {/* Main Triangle/Shape */}
+        <motion.g
+          animate={{
+            scale: localStep === 6 || localStep === 7 ? 0 : 1,
+            opacity: localStep === 6 || localStep === 7 ? 0 : 1
+          }}
+          transition={{ duration: 0.6, ease: "backOut" }}
+          style={{ originX: "12px", originY: "13px" }}
+        >
+          <motion.path
+            d={paths[index]}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            pathLength="1"
+            strokeDasharray="0.03125 0.03125"
+            animate={{ d: paths[index] }}
+            transition={{ duration: 0.6, ease: "backOut" }}
+          />
+        </motion.g>
+
+        {/* Mini Triangle 1 (Flies Right, Spins 360) */}
+        <motion.g
+          initial={false}
+          animate={{
+            opacity: localStep === 6 || localStep === 7 ? 1 : 0,
+            scale: localStep === 6 || localStep === 7 ? 0.5 : 0,
+            x: localStep === 6 || localStep === 7 ? 22 : 0,
+            rotate: localStep >= 7 ? 360 : 0
+          }}
+          transition={{ duration: 0.6, ease: "backOut" }}
+          style={{ originX: "12px", originY: "13px" }}
+        >
+          <path
+            d={paths[2]}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            pathLength="1"
+            strokeDasharray="0.03125 0.03125"
+          />
+        </motion.g>
+
+        {/* Mini Triangle 2 (Flies Left, Spins -360) */}
+        <motion.g
+          initial={false}
+          animate={{
+            opacity: localStep === 6 || localStep === 7 ? 1 : 0,
+            scale: localStep === 6 || localStep === 7 ? 0.5 : 0,
+            x: localStep === 6 || localStep === 7 ? -22 : 0,
+            rotate: localStep >= 7 ? -360 : 0
+          }}
+          transition={{ duration: 0.6, ease: "backOut" }}
+          style={{ originX: "12px", originY: "13px" }}
+        >
+          <path
+            d={paths[2]}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            pathLength="1"
+            strokeDasharray="0.03125 0.03125"
+          />
+        </motion.g>
+      </motion.svg>
+    </div>
+  );
+};
+
+const ProjectCard = ({ project, i, setActiveModal }: any) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }} 
+      whileInView={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.5, delay: i * 0.1 }} 
+      className="group relative cursor-pointer"
+      onClick={() => setActiveModal(i)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="aspect-video bg-white/20 border-2 border-gray-800 flex items-center justify-center overflow-hidden shadow-[8px_8px_0_0_#1f2937] group-hover:shadow-[4px_4px_0_0_#1f2937] group-hover:translate-y-1 group-hover:translate-x-1 transition-all">
+        <LDRShape isHovered={isHovered} />
+      </div>
+      <div className="mt-6 flex justify-between items-start">
+        <div>
+          <h4 className="text-xl font-black text-black uppercase mb-1">{project.title}</h4>
+          <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">{project.type}</p>
+        </div>
+        <button className="w-10 h-10 bg-black text-white flex items-center justify-center group-hover:bg-gray-800 transition-colors pointer-events-none">
+          <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+        </button>
+      </div>
+    </motion.div>
+  );
+};
 
 interface ProjectsProps {
   activeModal: number | null;
@@ -36,27 +198,7 @@ export default function Projects({ activeModal, setActiveModal }: ProjectsProps)
             { title: "School / Side Projects", type: "Academic & Personal" },
             { title: "Client Side Projects", type: "Professional Work" }
           ].map((project, i) => (
-            <motion.div 
-              key={i} 
-              initial={{ opacity: 0, y: 20 }} 
-              whileInView={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.5, delay: i * 0.1 }} 
-              className="group relative cursor-pointer"
-              onClick={() => setActiveModal(i)}
-            >
-              <div className="aspect-video bg-white/20 border-2 border-gray-800 flex items-center justify-center overflow-hidden shadow-[8px_8px_0_0_#1f2937] group-hover:shadow-[4px_4px_0_0_#1f2937] group-hover:translate-y-1 group-hover:translate-x-1 transition-all">
-                <div className="w-16 h-16 border-4 border-dashed border-gray-800 group-hover:rotate-90 transition-transform duration-700" />
-              </div>
-              <div className="mt-6 flex justify-between items-start">
-                <div>
-                  <h4 className="text-xl font-black text-black uppercase mb-1">{project.title}</h4>
-                  <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">{project.type}</p>
-                </div>
-                <button className="w-10 h-10 bg-black text-white flex items-center justify-center group-hover:bg-gray-800 transition-colors pointer-events-none">
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-              </div>
-            </motion.div>
+            <ProjectCard key={i} project={project} i={i} setActiveModal={setActiveModal} />
           ))}
         </div>
       </section>
