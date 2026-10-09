@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion';
+import type { MotionStyle } from 'framer-motion';
 
-export const RightBorder = ({ style, className = "" }: any) => (
+interface RightBorderProps {
+  style?: MotionStyle;
+  className?: string;
+}
+
+export const RightBorder = ({ style, className = "" }: RightBorderProps) => (
   <motion.div 
     className={`fixed right-0 top-0 h-screen w-8 md:w-10 z-40 flex flex-col gap-3 md:gap-4 pt-6 pointer-events-none ${className}`}
     style={style}

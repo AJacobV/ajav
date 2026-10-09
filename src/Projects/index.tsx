@@ -1,9 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, X, Heart, Skull, Zap, Hexagon, Circle } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
 
+import SavrVideo from '../assets/Savr/Savr_screenrecord.webm';
+
+import LMDHome from '../assets/LMD/LMDHome.jpeg';
+import LMDContent from '../assets/LMD/LMDContent.jpeg';
+import LMDLogin from '../assets/LMD/LMDLogin.jpeg';
+import CICSSelectHome from '../assets/CICSelect/CICSSelectHome.jpeg';
+import CICSSelectContent from '../assets/CICSelect/CICSSelectContent.jpeg';
+import CICSSelectAdmin from '../assets/CICSelect/CICSSelectAdmin.jpeg';
+import FalconEyeDashboard from '../assets/FalconEye/falconEye_dashboard.png';
+import FalconEyeIncident from '../assets/FalconEye/falconEye_incidentreportpage.png';
+import FalconEyeLost from '../assets/FalconEye/falconEye_lostandfoundpage.png';
+import FalconEyeHeatmap from '../assets/FalconEye/falconEye_heatmappage.png';
+import ANVDashboard from '../assets/ANV/dashboard_ANV.png';
+import AmoreLuxeTitle from '../assets/AmoreLuxe/AmoreLux_title.jpg';
+import AmoreLuxeWomens from '../assets/AmoreLuxe/AmoreLux_womenscollection.jpg';
+import AmoreLuxeMens from '../assets/AmoreLuxe/AmoreLux_menscollection.jpg';
+import AmoreLuxeFeatured from '../assets/AmoreLuxe/AmoreLux_featuredfragances.jpg';
+import FISDashboard from '../assets/FIS/fisadmin_dashboard.png';
+import FISFuel from '../assets/FIS/fisadmin_fuel.png';
+import FISDispatch from '../assets/FIS/fisadmin_dispatch.png';
 const LDRShape = ({ isHovered }: { isHovered: boolean }) => {
   const [step, setStep] = useState(0);
+
+  if (!isHovered && step !== 0) {
+    setStep(0);
+  }
 
   const paths = [
     // Square
@@ -16,7 +40,6 @@ const LDRShape = ({ isHovered }: { isHovered: boolean }) => {
 
   useEffect(() => {
     if (!isHovered) {
-      setStep(0);
       return;
     }
     const interval = setInterval(() => {
@@ -134,7 +157,20 @@ const LDRShape = ({ isHovered }: { isHovered: boolean }) => {
   );
 };
 
-const ProjectCard = ({ project, i, setActiveModal }: any) => {
+export interface ProjectData {
+  title: string;
+  images?: string[];
+  video?: string;
+  tech?: string[];
+  desc?: string;
+}
+
+export interface ProjectCategory {
+  title: string;
+  type: string;
+}
+
+const ProjectCard = ({ project, i, setActiveModal }: { project: ProjectCategory; i: number; setActiveModal: (val: number | null) => void }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -163,24 +199,204 @@ const ProjectCard = ({ project, i, setActiveModal }: any) => {
   );
 };
 
+const ProjectMedia = ({ item, hovered, isDetail = false }: { item: ProjectData; hovered: boolean; isDetail?: boolean }) => {
+  const [imgIndex, setImgIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  if ((!hovered || !item.images || item.images.length <= 1) && imgIndex !== 0) {
+    setImgIndex(0);
+  }
+
+  useEffect(() => {
+    if (!hovered || !item.images || item.images.length <= 1) {
+      return;
+    }
+    const timer = setInterval(() => {
+      setImgIndex(prev => (prev + 1) % item.images!.length);
+    }, 2000);
+    return () => clearInterval(timer);
+  }, [hovered, item.images]);
+
+  useEffect(() => {
+    if (item.video && videoRef.current) {
+      if (hovered) {
+        videoRef.current.play().catch(e => console.log("Video play error:", e));
+      } else {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
+    }
+  }, [hovered, item.video]);
+
+  return (
+    <>
+      <div className="absolute inset-0 bg-gray-800 opacity-0 group-hover:opacity-10 transition-opacity z-20 pointer-events-none" />
+      {item.video ? (
+        <video
+          ref={videoRef}
+          src={item.video}
+          loop
+          muted
+          playsInline
+          className={`w-full h-full absolute inset-0 z-10 ${isDetail ? 'object-contain' : 'object-cover'}`}
+        />
+      ) : item.images && item.images.length > 0 ? (
+        <AnimatePresence>
+          <motion.img
+            key={imgIndex}
+            src={item.images[imgIndex]}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className={`w-full h-full absolute inset-0 z-10 ${isDetail ? 'object-contain' : 'object-cover'}`}
+          />
+        </AnimatePresence>
+      ) : (
+        <span className="font-bold text-gray-300 tracking-widest text-2xl group-hover:scale-110 transition-transform duration-500 z-0">THUMBNAIL</span>
+      )}
+    </>
+  );
+};
+
+const ProjectItem = ({ item, onClick }: { item: ProjectData; onClick: () => void }) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div 
+      className="bg-white border-2 border-gray-900 shadow-[6px_6px_0_0_#1f2937] group hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[10px_10px_0_0_#1f2937] transition-all cursor-pointer flex flex-col h-full"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={onClick}
+    >
+      <div className="aspect-video bg-gray-100 border-b-2 border-gray-900 flex items-center justify-center overflow-hidden relative">
+        <ProjectMedia item={item} hovered={hovered} />
+      </div>
+      <div className="p-6 flex flex-col flex-1">
+        <h4 className="text-xl font-black uppercase mb-4 group-hover:text-gray-600 transition-colors">{item.title}</h4>
+        <div className="flex flex-wrap gap-2 mt-auto">
+          {item.tech?.map((t: string) => (
+             <span key={t} className="px-3 py-1 bg-white border-2 border-gray-900 text-xs font-bold uppercase shadow-[2px_2px_0_0_#1f2937]">{t}</span>
+          )) || (
+             <>
+               <span className="px-3 py-1 bg-white border-2 border-gray-900 text-xs font-bold uppercase shadow-[2px_2px_0_0_#1f2937]">React</span>
+               <span className="px-3 py-1 bg-white border-2 border-gray-900 text-xs font-bold uppercase shadow-[2px_2px_0_0_#1f2937]">Node</span>
+             </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ProjectDetail = ({ item, onBack }: { item: ProjectData; onBack: () => void }) => {
+  return (
+    <div className="relative z-10 w-full h-full flex flex-col">
+      {/* Huge Background Text peeking over the top */}
+      <div className="absolute top-[-3rem] left-0 right-0 z-[-1] pointer-events-none select-none overflow-visible h-40 md:h-48 lg:h-64">
+        <motion.svg 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 0.05, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full h-full text-gray-900 overflow-visible"
+        >
+          <text 
+            x="0" 
+            y="65%" 
+            textLength="100%" 
+            lengthAdjust="spacing" 
+            className="text-[6rem] md:text-[10rem] lg:text-[12rem] font-black uppercase"
+            fill="currentColor"
+          >
+            {item.title.split(/[\s:]+/)[0]}
+          </text>
+        </motion.svg>
+      </div>
+
+      <motion.button 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0.2, 1, 0, 1] }}
+        transition={{ duration: 0.4, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+        onClick={onBack} 
+        className="mb-4 w-fit text-gray-500 font-bold uppercase hover:text-black flex items-center gap-2 group cursor-pointer transition-colors"
+      >
+        <ArrowRight size={16} className="rotate-180 group-hover:-translate-x-1 transition-transform" /> 
+        Back to Overview
+      </motion.button>
+      
+      <div className="flex-1 overflow-hidden bg-white border-2 border-gray-900 shadow-[6px_6px_0_0_#1f2937] flex flex-col lg:flex-row group">
+        <div className="w-full lg:w-2/3 h-64 lg:h-full border-b-2 lg:border-b-0 lg:border-r-2 border-gray-900 bg-gray-900 relative overflow-hidden flex items-center justify-center">
+           <ProjectMedia item={item} hovered={true} isDetail={true} />
+        </div>
+        
+        <div className="p-8 flex flex-col lg:w-1/3 overflow-y-auto">
+          <motion.h3 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0.2, 1, 0, 1] }}
+            transition={{ duration: 0.5, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+            className="text-3xl font-black uppercase mb-4"
+          >
+            {item.title}
+          </motion.h3>
+          
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0, 1, 0.4, 1] }}
+            transition={{ duration: 0.6, delay: 0.15, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+            className="mb-6"
+          >
+            <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Tech Stack</h5>
+            <div className="flex flex-wrap gap-2">
+              {item.tech?.map((t: string) => (
+                 <span key={t} className="px-3 py-1 bg-gray-100 border-2 border-gray-900 text-xs font-bold uppercase">{t}</span>
+              )) || (
+                 <>
+                   <span className="px-3 py-1 bg-gray-100 border-2 border-gray-900 text-xs font-bold uppercase">React</span>
+                   <span className="px-3 py-1 bg-gray-100 border-2 border-gray-900 text-xs font-bold uppercase">Node</span>
+                 </>
+              )}
+            </div>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0.2, 1, 0, 1] }}
+            transition={{ duration: 0.7, delay: 0.3, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+          >
+            <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Details</h5>
+            <p className="text-gray-700 font-medium leading-relaxed">
+               {item.desc || "A comprehensive breakdown of the architecture, stack, and outcomes for this specific implementation. Highly scalable and performance optimized."}
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 interface ProjectsProps {
   activeModal: number | null;
   setActiveModal: (val: number | null) => void;
 }
 
 export default function Projects({ activeModal, setActiveModal }: ProjectsProps) {
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+
+  if (activeModal === null && selectedProject !== null) {
+    setSelectedProject(null);
+  }
   const schoolProjects = [
-    { title: "LMD: Dental Hub" },
-    { title: "CICSelect" },
-    { title: "GAWIN" },
-    { title: "Recipe" },
-    { title: "Falcon Eye: Incident and Lost & Found system" }
+    { title: "LMD: Dental Hub", images: [LMDHome, LMDContent, LMDLogin] },
+    { title: "CICSelect", images: [CICSSelectHome, CICSSelectContent, CICSSelectAdmin] },
+    { title: "GAWIN", images: [] },
+    { title: "Savr", images: [], video: SavrVideo },
+    { title: "Falcon Eye: Incident and Lost & Found system", images: [FalconEyeDashboard, FalconEyeIncident, FalconEyeLost, FalconEyeHeatmap] }
   ];
 
   const clientProjects = [
-    { title: "ANV: encoding app" },
-    { title: "Amore Luxe" },
-    { title: "FIS" }
+    { title: "ANV: encoding app", images: [ANVDashboard] },
+    { title: "Amore Luxe", images: [AmoreLuxeTitle, AmoreLuxeWomens, AmoreLuxeMens, AmoreLuxeFeatured] },
+    { title: "FIS", images: [FISDashboard, FISFuel, FISDispatch] }
   ];
 
   const currentProjects = activeModal === 0 ? schoolProjects : clientProjects;
@@ -283,15 +499,21 @@ export default function Projects({ activeModal, setActiveModal }: ProjectsProps)
                     {/* Close button */}
                     <button
                       onClick={() => setActiveModal(null)}
-                      className="relative z-10 w-14 h-14 flex items-center justify-center bg-gray-900 text-white hover:bg-black transition-colors shadow-[4px_4px_0_0_#d1d5db] active:translate-y-1 active:translate-x-1 active:shadow-none shrink-0"
+                      className="group relative z-10 w-14 h-14 flex items-center justify-center bg-gray-900 text-white hover:bg-black transition-colors shadow-[4px_4px_0_0_#d1d5db] active:translate-y-1 active:translate-x-1 active:shadow-none shrink-0 cursor-pointer"
                     >
-                      <X size={32} />
+                      <X size={32} className="transition-transform duration-300 group-hover:rotate-90" />
                     </button>
                   </div>
                 </div>
 
                 {/* ③ Bottom tick strip */}
-                <div className="flex items-center h-7 border-t-2 border-gray-900 px-4 gap-[5px] overflow-hidden">
+                <motion.div 
+                  key={selectedProject ? 'detail' : 'grid'}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0, 1, 0, 1, 0.4, 1] }}
+                  transition={{ duration: 0.5, delay: 0.1, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+                  className="flex items-center h-7 border-t-2 border-gray-900 px-4 gap-[5px] overflow-hidden"
+                >
                   <div className="flex gap-[4px]">
                     {[0,1,2,3,4,5,6].map((i) => (
                       <div
@@ -311,56 +533,53 @@ export default function Projects({ activeModal, setActiveModal }: ProjectsProps)
                       />
                     ))}
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               {/* Modal Content Area */}
               <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-gray-50 relative overflow-hidden">
-                {/* 1. Modal-Specific Background Elements */}
-                <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#000 2px, transparent 2px)', backgroundSize: '32px 32px' }} />
                 
-                {/* Huge Data Archive Text */}
-                <div className="absolute -right-20 top-1/2 -translate-y-1/2 rotate-90 opacity-[0.04] pointer-events-none origin-center">
-                  <h1 className="text-[150px] font-black tracking-tighter whitespace-nowrap">ARCHIVE_SYS</h1>
-                </div>
+                {/* Background Decorations Wrapper - PREVENTS SCROLL OVERFLOW */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                  {/* 1. Modal-Specific Background Elements */}
+                  <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#000 2px, transparent 2px)', backgroundSize: '32px 32px' }} />
+                  
+                  {/* Huge Data Archive Text */}
+                  {!selectedProject && (
+                    <div className="absolute -right-20 top-1/2 -translate-y-1/2 rotate-90 opacity-[0.04] origin-center">
+                      <h1 className="text-[150px] font-black tracking-tighter whitespace-nowrap">ARCHIVE_SYS</h1>
+                    </div>
+                  )}
 
-                {/* Technical Corner Brackets */}
-                <div className="absolute top-4 left-4 w-16 h-16 border-t-4 border-l-4 border-gray-900 opacity-20 pointer-events-none" />
-                <div className="absolute bottom-4 right-4 w-16 h-16 border-b-4 border-r-4 border-gray-900 opacity-20 pointer-events-none" />
-                
-                {/* Barcode & Hex Data */}
-                <div className="absolute bottom-4 left-4 opacity-30 pointer-events-none flex flex-col gap-1">
-                   <div className="flex gap-1 h-8">
-                     {[1,3,2,1,4,1,2,5,1,2,1,3].map((w, i) => <div key={i} className="bg-gray-900 h-full" style={{ width: `${w * 2}px` }} />)}
-                   </div>
-                   <span className="text-[10px] font-bold font-mono tracking-widest text-gray-900">0x7F_ARCHIVE_DATA</span>
-                </div>
-
-                {/* Moving Scanline */}
-                <motion.div 
-                  className="absolute left-0 right-0 h-[2px] bg-gray-900/10 pointer-events-none z-0"
-                  animate={{ top: ["0%", "100%", "0%"] }}
-                  transition={{ duration: 10, ease: "linear", repeat: Infinity }}
-                />
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
-                   {currentProjects.map((item, index) => (
-                     <div key={index} className="bg-white border-2 border-gray-900 shadow-[6px_6px_0_0_#1f2937] group hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[10px_10px_0_0_#1f2937] transition-all cursor-pointer flex flex-col h-full">
-                       <div className="aspect-video bg-gray-100 border-b-2 border-gray-900 flex items-center justify-center overflow-hidden relative">
-                          <div className="absolute inset-0 bg-gray-800 opacity-0 group-hover:opacity-10 transition-opacity" />
-                          <span className="font-bold text-gray-300 tracking-widest text-2xl group-hover:scale-110 transition-transform duration-500">THUMBNAIL</span>
-                       </div>
-                       <div className="p-6 flex flex-col flex-1">
-                         <h4 className="text-xl font-black uppercase mb-2 group-hover:text-gray-600 transition-colors">{item.title}</h4>
-                         <p className="text-sm text-gray-600 font-bold mb-6 flex-1">A comprehensive breakdown of the architecture, stack, and outcomes for this specific implementation.</p>
-                         <div className="flex flex-wrap gap-2 mt-auto">
-                           <span className="px-3 py-1 bg-white border-2 border-gray-900 text-xs font-bold uppercase shadow-[2px_2px_0_0_#1f2937]">React</span>
-                           <span className="px-3 py-1 bg-white border-2 border-gray-900 text-xs font-bold uppercase shadow-[2px_2px_0_0_#1f2937]">Node</span>
-                         </div>
-                       </div>
+                  {/* Technical Corner Brackets */}
+                  <div className="absolute top-4 left-4 w-16 h-16 border-t-4 border-l-4 border-gray-900 opacity-20" />
+                  <div className="absolute bottom-4 right-4 w-16 h-16 border-b-4 border-r-4 border-gray-900 opacity-20" />
+                  
+                  {/* Barcode & Hex Data */}
+                  <div className="absolute bottom-4 left-4 opacity-30 flex flex-col gap-1">
+                     <div className="flex gap-1 h-8">
+                       {[1,3,2,1,4,1,2,5,1,2,1,3].map((w, i) => <div key={i} className="bg-gray-900 h-full" style={{ width: `${w * 2}px` }} />)}
                      </div>
-                   ))}
+                     <span className="text-[10px] font-bold font-mono tracking-widest text-gray-900">0x7F_ARCHIVE_DATA</span>
+                  </div>
+
+                  {/* Moving Scanline */}
+                  <motion.div 
+                    className="absolute left-0 right-0 h-[2px] bg-gray-900/10"
+                    animate={{ top: ["0%", "100%", "0%"] }}
+                    transition={{ duration: 10, ease: "linear", repeat: Infinity }}
+                  />
                 </div>
+
+                {!selectedProject ? (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+                     {currentProjects.map((item, index) => (
+                       <ProjectItem key={index} item={item} onClick={() => setSelectedProject(item)} />
+                     ))}
+                  </div>
+                ) : (
+                  <ProjectDetail item={selectedProject} onBack={() => setSelectedProject(null)} />
+                )}
               </div>
             </motion.div>
           </motion.div>

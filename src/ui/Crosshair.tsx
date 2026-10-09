@@ -1,6 +1,16 @@
 import { motion } from 'framer-motion';
+import type { MotionStyle } from 'framer-motion';
 
-export const Crosshair = ({ top, left, right, bottom, className = "", style }: any) => (
+interface CrosshairProps {
+  top?: string | number;
+  left?: string | number;
+  right?: string | number;
+  bottom?: string | number;
+  className?: string;
+  style?: MotionStyle;
+}
+
+export const Crosshair = ({ top, left, right, bottom, className = "", style }: CrosshairProps) => (
   <motion.div 
     className={`absolute w-12 h-12 pointer-events-none flex items-center justify-center opacity-70 -translate-x-1/2 -translate-y-1/2 ${className}`} 
     style={{ top, left, right, bottom, ...style }}

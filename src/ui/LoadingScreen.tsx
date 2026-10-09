@@ -3,7 +3,11 @@ import { motion } from 'framer-motion';
 
 export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [progress, setProgress] = useState(0);
-  const [text, setText] = useState("INITIALIZING...");
+  let text = "INITIALIZING...";
+  if (progress >= 100) text = "SYSTEM READY.";
+  else if (progress > 80) text = "ESTABLISHING NEXUS...";
+  else if (progress > 50) text = "COMPILING UI MODULES...";
+  else if (progress > 20) text = "LOADING ASSETS...";
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,13 +22,6 @@ export const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
     }, 150);
     return () => clearInterval(interval);
   }, [onComplete]);
-
-  useEffect(() => {
-    if (progress > 20) setText("LOADING ASSETS...");
-    if (progress > 50) setText("COMPILING UI MODULES...");
-    if (progress > 80) setText("ESTABLISHING NEXUS...");
-    if (progress >= 100) setText("SYSTEM READY.");
-  }, [progress]);
 
   return (
     <motion.div 

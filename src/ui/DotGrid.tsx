@@ -1,6 +1,18 @@
 import { motion } from 'framer-motion';
+import type { MotionStyle } from 'framer-motion';
 
-export const DotGrid = ({ top, left, right, bottom, className = "", rows = 4, cols = 5, style }: any) => (
+interface DotGridProps {
+  top?: string | number;
+  left?: string | number;
+  right?: string | number;
+  bottom?: string | number;
+  className?: string;
+  rows?: number;
+  cols?: number;
+  style?: MotionStyle;
+}
+
+export const DotGrid = ({ top, left, right, bottom, className = "", rows = 4, cols = 5, style }: DotGridProps) => (
   <motion.div 
     className={`absolute grid gap-3 opacity-60 pointer-events-none ${className}`} 
     style={{ 

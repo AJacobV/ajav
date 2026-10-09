@@ -10,12 +10,14 @@ import { Crosshair, DashedLine, DotGrid, LoadingScreen, RightBorder } from './ui
 
 import { Terminal, Mail, User, Cpu, Layers } from 'lucide-react';
 
-const bgTexts = [
-  { text: "O P E R A T I V E", style: { top: "15vh", width: "100vw", textAlign: "center", fontSize: "8vw" } as any },
-  { text: "C A L I B E R", style: { top: "45vh", paddingRight: "5vw", width: "100vw", textAlign: "right", fontSize: "11vw" } as any },
-  { text: "S K I L L", style: { bottom: "15vh", paddingLeft: "5vw", width: "100vw", textAlign: "left", fontSize: "15vw" } as any },
-  { text: "F L E X", style: { top: "20vh", paddingRight: "5vw", width: "100vw", textAlign: "right", fontSize: "20vw" } as any },
-  { text: "R E A C H", style: { bottom: "20vh", paddingLeft: "5vw", width: "100vw", textAlign: "left", fontSize: "15vw" } as any },
+import type { CSSProperties } from 'react';
+
+const bgTexts: { text: string; style: CSSProperties }[] = [
+  { text: "O P E R A T I V E", style: { top: "15vh", width: "100vw", textAlign: "center", fontSize: "8vw" } },
+  { text: "C A L I B E R", style: { top: "45vh", paddingRight: "5vw", width: "100vw", textAlign: "right", fontSize: "11vw" } },
+  { text: "S K I L L", style: { bottom: "15vh", paddingLeft: "5vw", width: "100vw", textAlign: "left", fontSize: "15vw" } },
+  { text: "F L E X", style: { top: "20vh", paddingRight: "5vw", width: "100vw", textAlign: "right", fontSize: "20vw" } },
+  { text: "R E A C H", style: { bottom: "20vh", paddingLeft: "5vw", width: "100vw", textAlign: "left", fontSize: "15vw" } },
 ];
 
 
@@ -63,7 +65,6 @@ export default function App() {
 
   const crosshair1X = useTransform(smoothScroll, [0, 1], ["0vw", "20vw"]);
   const crosshair2Y = useTransform(smoothScroll, [0, 1], ["0vh", "30vh"]);
-  const gridRotate = useTransform(smoothScroll, [0, 1], [0, 45]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -146,9 +147,11 @@ export default function App() {
         style={{ x: ringsX, y: ringsY, rotate: ringsRotate }}
       />
       <motion.div 
-        className="fixed top-0 right-0 w-[85vh] h-[85vh] rounded-full border-[3px] border-dashed border-gray-700 z-0 pointer-events-none opacity-30"
-        style={{ x: useTransform(smoothScroll, [0, 1], ["15%", "-75%"]), y: ringsY, rotate: useTransform(smoothScroll, [0, 1], [0, 360]) }}
-      />
+        className="fixed top-0 right-0 w-[85vh] h-[85vh] z-0 pointer-events-none opacity-30"
+        style={{ x: useTransform(smoothScroll, [0, 1], ["15%", "-75%"]), y: ringsY }}
+      >
+        <div className="w-full h-full rounded-full border-[3px] border-dashed border-gray-700" style={{ animation: 'spin 120s linear infinite' }} />
+      </motion.div>
 
       
       {/* Decorative Grids, Dots & Lines - Scattered and Repositioning! */}
@@ -240,7 +243,7 @@ export default function App() {
       <RightBorder className={`transition-opacity duration-500 ${activeModal !== null ? "opacity-0 pointer-events-none" : "opacity-100"}`} />
 
       {/* Scroll indicator crosshair at bottom center */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50 opacity-90 pointer-events-none">
+      <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50 pointer-events-none transition-opacity duration-500 ${activeModal !== null ? 'opacity-0' : 'opacity-90'}`}>
         <Crosshair className="!relative translate-x-0 translate-y-0 w-8 h-8" style={{ rotate: useTransform(smoothScroll, [0, 1], [0, 720]) }} />
         <span className="text-[10px] tracking-widest font-bold text-gray-800 uppercase">SCROLL</span>
       </div>
@@ -259,7 +262,7 @@ export default function App() {
             </h1>
             <div className="flex items-center gap-6 mb-8">
               <div className="w-24 h-4 bg-gray-800" />
-              <h2 className="text-xl md:text-2xl text-gray-600 uppercase tracking-widest font-bold">Class: Unique</h2>
+              <h2 className="text-xl md:text-2xl text-gray-600 uppercase tracking-widest font-bold">Class: Dev</h2>
             </div>
             <p className="max-w-lg text-sm text-gray-600 leading-relaxed uppercase border-l-[3px] border-gray-800 pl-4 font-bold">
               Deploying high-performance user interfaces. <br/>
