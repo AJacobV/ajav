@@ -164,6 +164,7 @@ export interface ProjectData {
   tech?: string[];
   desc?: string;
   url?: string;
+  status?: string;
 }
 
 export interface ProjectCategory {
@@ -339,6 +340,13 @@ const ProjectDetail = ({ item, onBack }: { item: ProjectData; onBack: () => void
           >
             {item.title}
           </motion.h3>
+
+          {item.status && (
+            <div className="mb-6 w-fit flex items-center gap-2 px-3 py-1 bg-yellow-100 border-2 border-gray-900 text-xs font-bold uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+              {item.status}
+            </div>
+          )}
           
           <motion.div 
             initial={{ opacity: 0 }}
@@ -399,7 +407,7 @@ export default function Projects({ activeModal, setActiveModal }: ProjectsProps)
   const schoolProjects = [
     { title: "LMD: Dental Hub", images: [LMDHome, LMDContent, LMDLogin], tech: ["ASP.NET", "C#", "Angular.js", "SQL"] },
     { title: "CICSelect", images: [CICSSelectHome, CICSSelectContent, CICSSelectAdmin], tech: ["ASP.NET", "C#", "Angular.js", "SQL"] },
-    { title: "GAWIN", images: [], tech: ["React.js", "TailwindCSS", "Typescript", "Next.js", "Supabase", "Prisma"], url: "https://gawin-wine.vercel.app" },
+    { title: "GAWIN", images: [], tech: ["React.js", "TailwindCSS", "Typescript", "Next.js", "Supabase", "Prisma"], url: "https://gawin-wine.vercel.app", status: "Still in progress" },
     { title: "Savr", images: [], video: SavrVideo, tech: ["Flutter", "Dart", "Firebase"] },
     { title: "Falcon Eye: Incident and Lost & Found system", images: [FalconEyeDashboard, FalconEyeIncident, FalconEyeLost, FalconEyeHeatmap], tech: ["React.js", "Node.js", "Firebase", "Backblaze", "Socket.IO"], url: "https://falcon-eye.vercel.app" }
   ];
