@@ -163,6 +163,7 @@ export interface ProjectData {
   video?: string;
   tech?: string[];
   desc?: string;
+  url?: string;
 }
 
 export interface ProjectCategory {
@@ -274,7 +275,7 @@ const ProjectItem = ({ item, onClick }: { item: ProjectData; onClick: () => void
       </div>
       <div className="p-6 flex flex-col flex-1">
         <h4 className="text-xl font-black uppercase mb-4 group-hover:text-gray-600 transition-colors">{item.title}</h4>
-        <div className="flex flex-wrap gap-2 mt-auto">
+        <div className="flex flex-wrap gap-2">
           {item.tech?.map((t: string) => (
              <span key={t} className="px-3 py-1 bg-white border-2 border-gray-900 text-xs font-bold uppercase shadow-[2px_2px_0_0_#1f2937]">{t}</span>
           )) || (
@@ -367,6 +368,16 @@ const ProjectDetail = ({ item, onBack }: { item: ProjectData; onBack: () => void
             <p className="text-gray-700 font-medium leading-relaxed">
                {item.desc || "A comprehensive breakdown of the architecture, stack, and outcomes for this specific implementation. Highly scalable and performance optimized."}
             </p>
+            {item.url && (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 w-fit flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-bold uppercase tracking-widest border-2 border-gray-900 hover:bg-white hover:text-gray-900 transition-colors"
+              >
+                Live Site <ArrowRight size={14} className="-rotate-45" />
+              </a>
+            )}
           </motion.div>
         </div>
       </div>
@@ -386,17 +397,17 @@ export default function Projects({ activeModal, setActiveModal }: ProjectsProps)
     setSelectedProject(null);
   }
   const schoolProjects = [
-    { title: "LMD: Dental Hub", images: [LMDHome, LMDContent, LMDLogin] },
-    { title: "CICSelect", images: [CICSSelectHome, CICSSelectContent, CICSSelectAdmin] },
-    { title: "GAWIN", images: [] },
-    { title: "Savr", images: [], video: SavrVideo },
-    { title: "Falcon Eye: Incident and Lost & Found system", images: [FalconEyeDashboard, FalconEyeIncident, FalconEyeLost, FalconEyeHeatmap] }
+    { title: "LMD: Dental Hub", images: [LMDHome, LMDContent, LMDLogin], tech: ["ASP.NET", "C#", "Angular.js", "SQL"] },
+    { title: "CICSelect", images: [CICSSelectHome, CICSSelectContent, CICSSelectAdmin], tech: ["ASP.NET", "C#", "Angular.js", "SQL"] },
+    { title: "GAWIN", images: [], tech: ["React.js", "TailwindCSS", "Typescript", "Next.js", "Supabase", "Prisma"], url: "https://gawin-wine.vercel.app" },
+    { title: "Savr", images: [], video: SavrVideo, tech: ["Flutter", "Dart", "Firebase"] },
+    { title: "Falcon Eye: Incident and Lost & Found system", images: [FalconEyeDashboard, FalconEyeIncident, FalconEyeLost, FalconEyeHeatmap], tech: ["React.js", "Node.js", "Firebase", "Backblaze", "Socket.IO"], url: "https://falcon-eye.vercel.app" }
   ];
 
   const clientProjects = [
-    { title: "ANV: encoding app", images: [ANVDashboard] },
-    { title: "Amore Luxe", images: [AmoreLuxeTitle, AmoreLuxeWomens, AmoreLuxeMens, AmoreLuxeFeatured] },
-    { title: "FIS", images: [FISDashboard, FISFuel, FISDispatch] }
+    { title: "ANV: encoding app", images: [ANVDashboard], tech: ["Electron", "Vite", "React.js", "Typescript", "Tailwind CSS", "Node.js", "exceljs"] },
+    { title: "Amore Luxe", images: [AmoreLuxeTitle, AmoreLuxeWomens, AmoreLuxeMens, AmoreLuxeFeatured], tech: ["React.js", "Tailwind CSS"], url: "https://amoreluxe.vercel.app" },
+    { title: "FIS", images: [FISDashboard, FISFuel, FISDispatch], tech: ["React.js", "Typescript", "Supabase", "Prisma", "Next.js"] }
   ];
 
   const currentProjects = activeModal === 0 ? schoolProjects : clientProjects;
