@@ -195,7 +195,7 @@ export default function App() {
       </div>
 
       {/* 5. Left Navigation System */}
-      <div className={`fixed left-8 md:left-12 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-12 md:gap-16 pointer-events-none transition-opacity duration-500 ${activeModal !== null ? "opacity-0" : "opacity-100"}`}>
+      <div className={`fixed top-4 left-1/2 -translate-x-1/2 md:left-12 md:top-1/2 md:translate-x-0 md:-translate-y-1/2 z-50 flex flex-row md:flex-col gap-8 md:gap-16 pointer-events-none transition-opacity duration-500 ${activeModal !== null ? "opacity-0" : "opacity-100"}`}>
         {navItems.map((item, i) => {
           const Icon = item.icon;
           const isActive = activeSection === i;
@@ -223,11 +223,11 @@ export default function App() {
             </div>
             
             <div 
-              className={`absolute left-4 h-8 bg-gray-800 transition-all duration-500 ease-out -z-10 group-hover:w-[120px] group-hover:opacity-100 ${isActive ? 'w-[120px] opacity-100' : 'w-[40px] opacity-40'}`}
+              className={`hidden md:block absolute left-4 h-8 bg-gray-800 transition-all duration-500 ease-out -z-10 group-hover:w-[120px] group-hover:opacity-100 ${isActive ? 'w-[120px] opacity-100' : 'w-[40px] opacity-40'}`}
             />
             
             <div 
-              className={`absolute left-12 flex items-center transition-opacity duration-300 group-hover:opacity-100 ${isActive ? 'opacity-100' : 'opacity-0'}`}
+              className={`hidden md:flex absolute left-12 items-center transition-opacity duration-300 group-hover:opacity-100 ${isActive ? 'opacity-100' : 'opacity-0'}`}
             >
               <span className="font-bold tracking-widest text-[10px] md:text-xs text-white">
                 {item.label}
@@ -236,7 +236,8 @@ export default function App() {
           </div>
         )})}
         {/* Connecting Line */}
-        <div className="absolute left-[15px] top-4 bottom-4 w-[2px] bg-gray-700 -z-20 pointer-events-none" />
+        <div className="hidden md:block absolute left-[15px] top-4 bottom-4 w-[2px] bg-gray-700 -z-20 pointer-events-none" />
+        <div className="md:hidden absolute top-[15px] left-4 right-4 h-[2px] bg-gray-700 -z-20 pointer-events-none" />
       </div>
 
       {/* Parallax Right Border */}
