@@ -16,6 +16,7 @@ export default function ContactMe() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!CONTACT_URL) {
+      console.error('VITE_CONTACT_URL is not set. Add it to .env and restart the dev server (or set it in your host and redeploy).');
       setStatus('error');
       return;
     }
@@ -32,7 +33,8 @@ export default function ContactMe() {
       setStatus('sent');
       setEmail('');
       setMessage('');
-    } catch {
+    } catch (err) {
+      console.error('Contact form submission failed:', err);
       setStatus('error');
     }
   };

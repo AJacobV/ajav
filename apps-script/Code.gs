@@ -41,6 +41,12 @@ function doPost(e) {
   }
 }
 
+// Run this once from the editor to grant the sheet + email permissions.
+function authorize() {
+  SpreadsheetApp.getActiveSpreadsheet();
+  Logger.log('Mail quota left: ' + MailApp.getRemainingDailyQuota());
+}
+
 function json(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
