@@ -8,7 +8,7 @@ import ContactMe from './ContactMe';
 import { Crosshair, DashedLine, DotGrid, LoadingScreen, RightBorder } from './ui';
 
 
-import { Terminal, Mail, User, Cpu, Layers } from 'lucide-react';
+import { Terminal, Mail, User, Cpu, Layers, Download } from 'lucide-react';
 
 import type { CSSProperties } from 'react';
 
@@ -269,6 +269,13 @@ export default function App() {
               Deploying high-performance user interfaces. <br/>
               Awaiting command input.
             </p>
+            <a
+              href="/Valeros_Angelo_Jacob-CV.pdf"
+              download="Valeros_Angelo_Jacob-CV.pdf"
+              className="mt-8 w-fit flex items-center gap-2 px-6 py-3 bg-black text-white text-xs font-black uppercase tracking-widest border-2 border-gray-900 shadow-[4px_4px_0_0_#1f2937] hover:bg-gray-800 hover:shadow-none hover:translate-y-1 hover:translate-x-1 transition-all"
+            >
+              <Download size={16} strokeWidth={3} /> Download CV
+            </a>
           </motion.div>
         </section>
 
